@@ -1,10 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { BILLING_SERVICE } from './constant/service'
 import { ClientProxy } from '@nestjs/microservices'
-import { CreateOrderDto } from './dto/create-order.dto'
 import { InjectModel } from '@nestjs/mongoose'
-import { Order, OrderDocument } from './schema/order.schema'
 import { Model } from 'mongoose'
+import { lastValueFrom } from 'rxjs'
+import { BILLING_SERVICE } from './constant/service'
+import { CreateOrderDto } from './dto/create-order.dto'
+import { Order, OrderDocument } from './schema/order.schema'
 
 @Injectable()
 export class OrderService
@@ -14,13 +15,32 @@ export class OrderService
     @InjectModel( Order.name ) private orderModel: Model<OrderDocument>
   ) { }
 
-  create ( createOrderDto: CreateOrderDto ): string
+  async create ( createOrderDto: CreateOrderDto ): Promise<Order>
   {
+    try
+    {
+      const order = new this.orderModel( {
+        name: createOrderDto.name,
+        price: createOrderDto.price,
+        phoneNumber: createOrderDto.phoneNumber,
+      } )
+      await order.save()
 
-    this.billingClient.emit( "order_created", {
-      createOrderDto
-    } )
+      await lastValueFrom(
+        this.billingClient.emit( "order_created", {
+          order
+        } )
+      )
 
-    return
+      return order
+    } catch ( error )
+    {
+      throw new Error( error )
+    }
+  }
+
+  async getAll (): Promise<Order[]>
+  {
+    return await this.orderModel.find( {} )
   }
 }

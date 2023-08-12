@@ -1,12 +1,11 @@
 import { Controller, Get } from '@nestjs/common'
-import { BillingService } from './billing.service'
 import { Ctx, EventPattern, Payload, RmqContext } from '@nestjs/microservices'
-import { RmqService } from '@app/common'
+import { BillingService } from './billing.service'
 
 @Controller()
 export class BillingController
 {
-  constructor ( private readonly billingService: BillingService, private rmqService: RmqService ) { }
+  constructor ( private readonly billingService: BillingService ) { }
 
   @Get()
   getHello (): string
@@ -17,6 +16,10 @@ export class BillingController
   @EventPattern( "order_created" )
   handleOrderCreated ( @Payload() data: any, @Ctx() context: RmqContext )
   {
+    console.log( "Hi" )
+
+    console.log( data )
+
     this.billingService.handleOrderCreated( data )
     // this.rmqService.ack( context );
 
