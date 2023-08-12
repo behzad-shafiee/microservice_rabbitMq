@@ -6,6 +6,9 @@ import { DatabaseModule, RmqModule } from '@app/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import Joi from 'joi'
 import { JwtModule } from '@nestjs/jwt'
+import { Mongoose } from 'mongoose'
+import { MongooseModule } from '@nestjs/mongoose'
+import { User, UserSchema } from './schema/user.schema'
 
 @Module( {
   imports: [
@@ -30,11 +33,14 @@ import { JwtModule } from '@nestjs/jwt'
           expiresIn: configService.get( "JWT_EXPIRATION" )
         }
       } ),
-      inject:[ ConfigService ]
+      inject: [ ConfigService ]
     } ),
     ClientsModule.register( [
       { name: 'AUTH_SERVICE', transport: Transport.TCP },
     ] ),
+    MongooseModule.forFeature( [
+      { name: User.name, schema: UserSchema }
+    ] )
   ],
   controllers: [ AuthController ],
   providers: [ AuthService ],
