@@ -4,11 +4,13 @@ import { AuthService } from './auth.service'
 import { ClientsModule, Transport } from '@nestjs/microservices'
 import { DatabaseModule, RmqModule } from '@app/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
-import Joi from 'joi'
+import * as Joi from 'joi'
 import { JwtModule } from '@nestjs/jwt'
 import { Mongoose } from 'mongoose'
 import { MongooseModule } from '@nestjs/mongoose'
 import { User, UserSchema } from './schema/user.schema'
+import { LocalStrategy } from './strategy/local-auth.strategy'
+import { JwtStrategy } from './strategy/jwt.strategy'
 
 @Module( {
   imports: [
@@ -28,7 +30,7 @@ import { User, UserSchema } from './schema/user.schema'
     } ),
     JwtModule.registerAsync( {
       useFactory: ( configService: ConfigService ) => ( {
-        secret: configService.get( "JWT_SECRET" ),
+        secret: configService.get( "JWT_SECRET" ) ,
         signOptions: {
           expiresIn: configService.get( "JWT_EXPIRATION" )
         }
@@ -43,6 +45,6 @@ import { User, UserSchema } from './schema/user.schema'
     ] )
   ],
   controllers: [ AuthController ],
-  providers: [ AuthService ],
+  providers: [ AuthService ,LocalStrategy,JwtStrategy  ],
 } )
 export class AuthModule { }
