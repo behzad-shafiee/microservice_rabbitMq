@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common'
 import { ClientProxy } from "@nestjs/microservices"
 import { User, UserDocument } from './schema/user.schema'
 import { LoginDto } from './dto/login.dto'
@@ -33,28 +33,26 @@ export class AuthService
     return user
   }
 
-  login ( user: User, res: Response ): Promise<User> | any
+  async login ( user: UserDocument, res: Response ): Promise<any>
   {
-    const tokenPayload = {
-      userId: user._id.toHexString(),
-      sub: user.email
 
+
+    const tokenPayload = {
+      userId: user._id,
     }
-    console.log( tokenPayload )
+
+    let token = this.jwtService.sign( tokenPayload )
 
     let expires = new Date()
+
     expires = expires.getSeconds() + this.confgService.get( 'JWT_EXPIRES_IN' )
-    const token = this.jwtService.sign( tokenPayload )
-    console.log( token )
 
     res.cookie( 'Authenticate', token, {
       expires
     } )
-    const result: any = {}
-    result.user = user
-    result.token = token
-    console.log(result);
-    
-    return result
+
+    return {
+      result: `Hi ${ user.email } Wellcome to Site`
+    }
   }
 }

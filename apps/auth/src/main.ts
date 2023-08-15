@@ -18,11 +18,8 @@ async function bootstrap ()
     .setDescription( 'The cats API description' )
     .setVersion( '1.0' )
     .addTag( 'cats' )
-    .addBearerAuth(
-      { type: 'http', scheme: 'Bearer', bearerFormat: 'Token', in: 'header' },
-      'access-token',
-    )
     .build()
+    
   const document = SwaggerModule.createDocument( app, config )
   SwaggerModule.setup( 'auth', app, document )
 

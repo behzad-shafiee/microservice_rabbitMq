@@ -1,8 +1,8 @@
-import { Body, Controller, Post, Res, UseGuards, Get } from '@nestjs/common'
+import { Body, Controller, Post, Res, UseGuards, Get, Req } from '@nestjs/common'
 import { AuthService } from './auth.service'
 import { LoginDto } from './dto/login.dto'
-import { User } from './schema/user.schema'
-import { Response } from "express"
+import { User, UserDocument } from './schema/user.schema'
+import { Response, Request } from "express"
 import { GetUser } from '../decorator/get-user.decorator'
 import { RegisterDto } from './dto/register.dto'
 import { LocalAuthGuard } from './guard/local-auth.guard'
@@ -26,20 +26,18 @@ export class AuthController
 
   @UseGuards( LocalAuthGuard )
   @Post( 'login' )
-  async login ( @Body() loginDto: LoginDto, @GetUser() user: User, @Res( { passthrough: true } ) res: Response ): Promise<User | any> 
+  async login ( @Body() loginDto: LoginDto, @GetUser() user: UserDocument, @Res( { passthrough: true } ) res: Response ): Promise<User | any> 
   {
-
     return await this.authService.login( user, res )
-
   }
 
   @UseGuards( JwtAuthGuard )
-  @ApiBearerAuth('access-token')
   @Get( 'protected' )
-  async testProtected (): Promise<User | any> 
+  async testProtected ( @Req() req: Request ): Promise<User | any> 
   {
+    console.log( req.cookies )
 
-    return ( "auheticated successfully" )
+    return ( { result: "auheticated successfully" } )
 
   }
 }

@@ -9,7 +9,7 @@ import { JwtModule } from '@nestjs/jwt'
 import { Mongoose } from 'mongoose'
 import { MongooseModule } from '@nestjs/mongoose'
 import { User, UserSchema } from './schema/user.schema'
-import { LocalStrategy } from './strategy/local-auth.strategy'
+import { LocalStrategy } from './strategy/local.strategy'
 import { JwtStrategy } from './strategy/jwt.strategy'
 
 @Module( {
@@ -28,15 +28,20 @@ import { JwtStrategy } from './strategy/jwt.strategy'
         JWT_SECRET: Joi.string().required(),
       } )
     } ),
-    JwtModule.registerAsync( {
-      useFactory: ( configService: ConfigService ) => ( {
-        secret: configService.get( "JWT_SECRET" ) ,
-        signOptions: {
-          expiresIn: configService.get( "JWT_EXPIRATION" )
-        }
-      } ),
-      inject: [ ConfigService ]
+    JwtModule.register( {
+      secret: 'ajksndjanasujbujscopsds68d4v85s4dv85sd^',
     } ),
+   
+  //  JwtModule.registerAsync( {
+  //     useFactory: ( configService: ConfigService ) => ( 
+  //      {
+  //       secret: 'ajksndjanasujbujscopsds68d4v85s4dv85sd^',
+  //       // signOptions: {
+  //       //   expiresIn: configService.get( "JWT_EXPIRATION" )
+  //       // }
+  //     } ),
+    //   inject: [ ConfigService ]
+    // } ),
     ClientsModule.register( [
       { name: 'AUTH_SERVICE', transport: Transport.TCP },
     ] ),
@@ -45,6 +50,6 @@ import { JwtStrategy } from './strategy/jwt.strategy'
     ] )
   ],
   controllers: [ AuthController ],
-  providers: [ AuthService ,LocalStrategy,JwtStrategy  ],
+  providers: [ AuthService ,JwtStrategy,LocalStrategy  ],
 } )
 export class AuthModule { }

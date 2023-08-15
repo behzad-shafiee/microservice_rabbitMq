@@ -1,8 +1,10 @@
 import { Injectable, UnauthorizedException } from "@nestjs/common"
 import { ConfigService } from "@nestjs/config"
 import { PassportStrategy } from "@nestjs/passport"
-import { ExtractJwt } from "passport-jwt"
-import { Strategy } from "passport-jwt"
+import { ExtractJwt, Strategy } from "passport-jwt"
+import { User, UserDocument } from "../schema/user.schema"
+import { Model } from "mongoose"
+import { InjectModel } from "@nestjs/mongoose"
 
 export interface TokenPayload
 {
@@ -11,39 +13,44 @@ export interface TokenPayload
 }
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy( Strategy ) {
+export class JwtStrategy extends PassportStrategy( Strategy, 'jwt' ) {
 
-    constructor ( configService: ConfigService )
+    userModel: Model<UserDocument>
+    constructor (
+        configService: ConfigService,
+        @InjectModel( User.name ) userModel: Model<UserDocument>
+    )
     {
         {
             super( {
-                // jwtFromRequest: ExtractJwt.fromExtractors( [
-                //     ( request: any ) =>
-                //     {
-                //         console.log(request?.cookies.Authenticate);
+
+                jwtFromRequest: ExtractJwt.fromExtractors( [
+                    ( request: any ) =>
+                    {
+                        console.log(request?.cookies.Authenticate);
                         
-                //         return request?.cookies.Authenticate
-                //     },
-                // ] ),
-                jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+                        if ( !request?.cookies.Authenticate )
+                        {
+                            throw new UnauthorizedException()
+                        }
+                        return request?.cookies.Authenticate
+                    },
+                ] ),
                 secretOrKey: configService.get<string>( 'JWT_SECRET' )
             } )
         }
+        this.userModel = userModel
     }
 
-    async validate ( { userId }: TokenPayload )
+    async validate ( payload: any )
     {
-        try
+        console.log('payload',payload);
+        
+        const user = await this.userModel.findOne( { _id: payload.userId } )
+        if ( !user )
         {
-            console.log("hi");
-            
-            console.log( userId )
-
-        } catch ( err )
-        {
-            console.log("hi err");
-            
-            throw new UnauthorizedException()
+            throw new UnauthorizedException( "user does not exists" )
         }
+        return user
     }
 }

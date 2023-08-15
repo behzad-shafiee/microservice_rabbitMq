@@ -6,7 +6,7 @@ import { HydratedDocument } from "mongoose"
 export type UserDocument = HydratedDocument<User>
 
 @Schema()
-export class User extends AbstractDocument
+export class User
 {
     @Prop( { type: String, required: true } )
     email: string
