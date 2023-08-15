@@ -14,7 +14,7 @@ import { JwtService } from '@nestjs/jwt'
 export class AuthService
 {
   constructor (
-    @Inject( 'AUTH_SERVICE' ) private client: ClientProxy,
+    // @Inject( 'AUTH_SERVICE' ) private client: ClientProxy,
     @InjectModel( User.name ) private userModel: Model<UserDocument>,
     private confgService: ConfigService,
     private jwtService: JwtService

@@ -1,13 +1,14 @@
-import { Body, Controller, Post, Res, UseGuards, Get, Req } from '@nestjs/common'
+import { Body, Controller, Post, Res, UseGuards, Get, Req, ExecutionContext } from '@nestjs/common'
 import { AuthService } from './auth.service'
 import { LoginDto } from './dto/login.dto'
 import { User, UserDocument } from './schema/user.schema'
 import { Response, Request } from "express"
-import { GetUser } from '../decorator/get-user.decorator'
+import { GetUser } from './decorator/get-user.decorator'
 import { RegisterDto } from './dto/register.dto'
 import { LocalAuthGuard } from './guard/local-auth.guard'
 import { JwtAuthGuard } from './guard/jwt-auth.guard'
 import { ApiBearerAuth, ApiTags, ApiCookieAuth } from '@nestjs/swagger'
+import { Ctx, EventPattern, Payload } from '@nestjs/microservices'
 
 @ApiTags( 'auth' )
 
@@ -32,12 +33,11 @@ export class AuthController
   }
 
   @UseGuards( JwtAuthGuard )
-  @Get( 'protected' )
-  async testProtected ( @Req() req: Request ): Promise<User | any> 
+  @EventPattern( "user_authenticate" )
+  async testProtected ( @GetUser() user: User ): Promise<User | any> 
   {
-    console.log( req.cookies )
-
-    return ( { result: "auheticated successfully" } )
-
+    console.log("hi");
+    
+    return user
   }
 }

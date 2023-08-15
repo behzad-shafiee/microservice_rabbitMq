@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common'
 import { OrderController } from './order.controller'
 import { OrderService } from './order.service'
-import { DatabaseModule, RmqModule } from '@app/common'
+import { DatabaseModule, RmqModule,AuthModule } from '@app/common'
 import { BILLING_SERVICE } from './constant/service'
 import { ConfigModule } from '@nestjs/config'
 import * as Joi from 'joi'
@@ -26,7 +26,8 @@ import { Order, OrderSchema } from './schema/order.schema'
     DatabaseModule,
     MongooseModule.forFeature( [
       { name: Order.name, schema: OrderSchema }
-    ] )
+    ] ),
+    AuthModule
   ],
   controllers: [ OrderController ],
   providers: [ OrderService ],

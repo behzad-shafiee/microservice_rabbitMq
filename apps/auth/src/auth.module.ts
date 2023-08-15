@@ -21,7 +21,7 @@ import { JwtStrategy } from './strategy/jwt.strategy'
       envFilePath: './apps/auth/.env',
       validationSchema: Joi.object( {
         RABBIT_MQ_URLS: Joi.string().required(),
-        RABBIT_MQ_BILLING_QUEUE: Joi.string().required(),
+        RABBIT_MQ_AUTH_QUEUE: Joi.string().required(),
         PORT: Joi.number().required(),
         MONGODB_URI: Joi.string().required(),
         JWT_EXPIRATION: Joi.string().required(),

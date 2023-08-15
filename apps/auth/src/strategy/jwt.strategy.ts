@@ -27,13 +27,13 @@ export class JwtStrategy extends PassportStrategy( Strategy, 'jwt' ) {
                 jwtFromRequest: ExtractJwt.fromExtractors( [
                     ( request: any ) =>
                     {
-                        console.log(request?.cookies.Authenticate);
+                        console.log('request?.Authenticate ===>',request?.Authenticate);
                         
-                        if ( !request?.cookies.Authenticate )
+                        if ( !request?.Authenticate)
                         {
                             throw new UnauthorizedException()
                         }
-                        return request?.cookies.Authenticate
+                        return request?.Authenticate
                     },
                 ] ),
                 secretOrKey: configService.get<string>( 'JWT_SECRET' )
@@ -44,7 +44,7 @@ export class JwtStrategy extends PassportStrategy( Strategy, 'jwt' ) {
 
     async validate ( payload: any )
     {
-        console.log('payload',payload);
+        console.log('payload ===>',payload);
         
         const user = await this.userModel.findOne( { _id: payload.userId } )
         if ( !user )
