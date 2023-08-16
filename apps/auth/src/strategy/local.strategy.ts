@@ -5,7 +5,6 @@ import { PassportStrategy } from "@nestjs/passport"
 import * as bcrypt from 'bcrypt'
 import { Model } from "mongoose"
 import { Strategy } from "passport-local"
-import { LoginDto } from "../dto/login.dto"
 import { User, UserDocument } from "../schema/user.schema"
 
 @Injectable()
@@ -19,11 +18,11 @@ export class LocalStrategy extends PassportStrategy( Strategy ) {
     }
 
 
-    async validate (email: string, password: string): Promise<UserDocument>
+    async validate ( email: string, password: string ): Promise<UserDocument>
     {
 
-        const user = await this.userModel.findOne( { email} )       
-          if ( !user || !await bcrypt.compare( password, user.password ) )
+        const user = await this.userModel.findOne( { email } )
+        if ( !user || !await bcrypt.compare( password, user.password ) )
         {
             throw new UnauthorizedException( "user does not exists" )
         }

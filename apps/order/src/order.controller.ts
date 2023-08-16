@@ -1,11 +1,12 @@
-import { RmqService } from '@app/common'
+import { JwtAuthGuard } from '@app/common'
 import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common'
+import { ApiTags } from '@nestjs/swagger'
+import { Request } from "express"
 import { CreateOrderDto } from './dto/create-order.dto'
 import { OrderService } from './order.service'
 import { Order } from './schema/order.schema'
-import { JwtAuthGuard } from '@app/common'
-import { Request } from "express"
 
+@ApiTags( 'order' )
 @Controller( 'order' )
 export class OrderController
 {
@@ -15,9 +16,8 @@ export class OrderController
   @Post()
   create ( @Body() createOrderDto: CreateOrderDto, @Req() req: Request ): Promise<Order>
   {
-    console.log( req.user )
-
-    return this.orderService.create( createOrderDto )
+    console.log('user info ===>',req.user);
+    return this.orderService.create( createOrderDto, req.cookies?.Authenticate )
   }
 
   @Get()

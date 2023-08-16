@@ -1,16 +1,15 @@
+import { DatabaseModule, RmqModule } from '@app/common'
 import { Module } from '@nestjs/common'
+import { ConfigModule } from '@nestjs/config'
+import { JwtModule } from '@nestjs/jwt'
+import { ClientsModule, Transport } from '@nestjs/microservices'
+import { MongooseModule } from '@nestjs/mongoose'
+import * as Joi from 'joi'
 import { AuthController } from './auth.controller'
 import { AuthService } from './auth.service'
-import { ClientsModule, Transport } from '@nestjs/microservices'
-import { DatabaseModule, RmqModule } from '@app/common'
-import { ConfigModule, ConfigService } from '@nestjs/config'
-import * as Joi from 'joi'
-import { JwtModule } from '@nestjs/jwt'
-import { Mongoose } from 'mongoose'
-import { MongooseModule } from '@nestjs/mongoose'
 import { User, UserSchema } from './schema/user.schema'
-import { LocalStrategy } from './strategy/local.strategy'
 import { JwtStrategy } from './strategy/jwt.strategy'
+import { LocalStrategy } from './strategy/local.strategy'
 
 @Module( {
   imports: [
@@ -31,15 +30,15 @@ import { JwtStrategy } from './strategy/jwt.strategy'
     JwtModule.register( {
       secret: 'ajksndjanasujbujscopsds68d4v85s4dv85sd^',
     } ),
-   
-  //  JwtModule.registerAsync( {
-  //     useFactory: ( configService: ConfigService ) => ( 
-  //      {
-  //       secret: 'ajksndjanasujbujscopsds68d4v85s4dv85sd^',
-  //       // signOptions: {
-  //       //   expiresIn: configService.get( "JWT_EXPIRATION" )
-  //       // }
-  //     } ),
+
+    //  JwtModule.registerAsync( {
+    //     useFactory: ( configService: ConfigService ) => ( 
+    //      {
+    //       secret: 'ajksndjanasujbujscopsds68d4v85s4dv85sd^',
+    //       // signOptions: {
+    //       //   expiresIn: configService.get( "JWT_EXPIRATION" )
+    //       // }
+    //     } ),
     //   inject: [ ConfigService ]
     // } ),
     ClientsModule.register( [
@@ -50,6 +49,6 @@ import { JwtStrategy } from './strategy/jwt.strategy'
     ] )
   ],
   controllers: [ AuthController ],
-  providers: [ AuthService ,JwtStrategy,LocalStrategy  ],
+  providers: [ AuthService, JwtStrategy, LocalStrategy ],
 } )
 export class AuthModule { }

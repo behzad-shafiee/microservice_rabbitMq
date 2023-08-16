@@ -15,7 +15,7 @@ export class OrderService
     @InjectModel( Order.name ) private orderModel: Model<OrderDocument>
   ) { }
 
-  async create ( createOrderDto: CreateOrderDto ): Promise<Order>
+  async create ( createOrderDto: CreateOrderDto, authenticate: string ): Promise<Order>
   {
     try
     {
@@ -25,13 +25,12 @@ export class OrderService
         phoneNumber: createOrderDto.phoneNumber,
       } )
       await order.save()
-
       await lastValueFrom(
         this.billingClient.emit( "order_created", {
+          Authenticate: authenticate,
           order
         } )
       )
-
       return order
     } catch ( error )
     {

@@ -1,5 +1,3 @@
-import { AbstractDocument } from "@app/common/database/abstract-document.schema"
-import { NestFactory } from "@nestjs/core"
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose"
 import { HydratedDocument } from "mongoose"
 

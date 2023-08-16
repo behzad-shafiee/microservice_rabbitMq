@@ -1,17 +1,16 @@
-import { Body, Controller, Post, Res, UseGuards, Get, Req, ExecutionContext } from '@nestjs/common'
+import { Body, Controller, Post, Res, UseGuards } from '@nestjs/common'
+import { EventPattern } from '@nestjs/microservices'
+import { ApiTags } from '@nestjs/swagger'
+import { Response } from "express"
 import { AuthService } from './auth.service'
-import { LoginDto } from './dto/login.dto'
-import { User, UserDocument } from './schema/user.schema'
-import { Response, Request } from "express"
 import { GetUser } from './decorator/get-user.decorator'
+import { LoginDto } from './dto/login.dto'
 import { RegisterDto } from './dto/register.dto'
-import { LocalAuthGuard } from './guard/local-auth.guard'
 import { JwtAuthGuard } from './guard/jwt-auth.guard'
-import { ApiBearerAuth, ApiTags, ApiCookieAuth } from '@nestjs/swagger'
-import { Ctx, EventPattern, Payload } from '@nestjs/microservices'
+import { LocalAuthGuard } from './guard/local-auth.guard'
+import { User, UserDocument } from './schema/user.schema'
 
 @ApiTags( 'auth' )
-
 @Controller( 'auth' )
 export class AuthController
 {
@@ -20,9 +19,7 @@ export class AuthController
   @Post( 'register' )
   async register ( @Body() registerDto: RegisterDto ): Promise<User> 
   {
-
     return await this.authService.register( registerDto )
-
   }
 
   @UseGuards( LocalAuthGuard )
@@ -36,8 +33,6 @@ export class AuthController
   @EventPattern( "user_authenticate" )
   async testProtected ( @GetUser() user: User ): Promise<User | any> 
   {
-    console.log("hi");
-    
     return user
   }
 }
